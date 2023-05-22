@@ -4,9 +4,8 @@ clear;
 echo -e "Checking for tools dependent on this script \n"
 echo "Thank you for waiting"
 
-
 # Define the software to check
-SOFTWARE="mkpasswd"
+SOFTWARE="mkpasswd whois"
 
 # Check which package manager is available
 if command -v apt-get &> /dev/null; then
@@ -38,10 +37,7 @@ elif command -v yum &> /dev/null; then
 #else
 	# Neither apt-get nor yum is available
 	#echo "Neither apt-get nor yum is available"
-
 fi
-
-
 
 # Define functions for each menu option
 
@@ -257,4 +253,3 @@ while true; do
             ;;
     esac
 done
-
