@@ -4,15 +4,21 @@ clear;
 echo -e "Checking for tools dependent on this script \n"
 echo "Thank you for waiting"
 
+
+
 # Define the software to check
-SOFTWARE="mkpasswd whois"
+SOFTWARE="openssl libssl-dev"
 
 # Check which package manager is available
 if command -v apt-get &> /dev/null; then
-
+	# Add dots to represent the checking progress
+	for (( i=1; i<=20; i++ )); do
+		echo -n "."
+		sleep 0.1  # Adjust sleep duration as needed
+	done
 	# Use apt-get to check if the software is installed
 	if ! dpkg -s $SOFTWARE &> /dev/null; then
-
+		
 		# Install the software using apt-get
 		sudo apt-get -qq update
 		sudo apt-get -qq install -y $SOFTWARE
@@ -23,8 +29,15 @@ if command -v apt-get &> /dev/null; then
 	fi
 	
 elif command -v yum &> /dev/null; then
+	# Add dots to represent the checking progress
+	for (( i=1; i<=20; i++ )); do
+		echo -n "."
+		sleep 0.1  # Adjust sleep duration as needed
+	done
 	# Use yum to check if the software is installed
 	if ! yum list installed $SOFTWARE &> /dev/null; then
+		echo -n "."
+		sleep 1
 		# Install the software using yum
 		sudo yum update -q
 		sudo yum install -q -y $SOFTWARE
@@ -38,6 +51,7 @@ elif command -v yum &> /dev/null; then
 	# Neither apt-get nor yum is available
 	#echo "Neither apt-get nor yum is available"
 fi
+
 
 # Define functions for each menu option
 
@@ -58,7 +72,7 @@ function add_user {
 				clear;
 			else
 				echo -n "password : " ; read -r password
-				passmaker=$(mkpasswd -m sha-512 -S password -s <<< $password)
+				passmaker=$(openssl passwd -1 $password)
 				useradd -m -p "$passmaker" "$username"
 				usermod --shell /bin/bash $username
 				echo "$(date +"%a %b %d %H:%M:%S %z %Y") $username created :>"
@@ -105,7 +119,7 @@ function add_user {
 					echo "$prefix$i is allready exist !"
 				else
 					numpassgen="$prefix$i""Pass""$[$RANDOM % 99999 + 10000]"
-					password=$(mkpasswd -m sha-512 -S password -s <<< $numpassgen)
+					password=$(openssl passwd -1 $numpassgen)
 					useradd -m -p "$password" "$prefix$i"
 					usermod --shell /bin/bash "$prefix$i"
 					echo $prefix$i:$numpassgen >> '/root/password.txt'
